@@ -1,0 +1,177 @@
+/* =========================================================
+   FASE 1 — Variáveis e base da página
+   ========================================================= */
+:root {
+  --fundo: #f7f2ec;          /* creme exato do fundo da imagem */
+  --ouro-escuro: #6e5414;
+  --ouro: #8f7323;           /* dourado medido nas letras originais */
+  --ouro-claro: #c9a13a;
+  --ouro-brilho: #f7dc7c;    /* reflexo: ouro bem claro (branco sumiria no creme) */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #e9e2d8;
+}
+
+/* =========================================================
+   FASE 2 — O cartão (moldura azul vem da imagem de fundo)
+   ========================================================= */
+.convite {
+  position: relative;
+  /* cabe na tela inteira mantendo a proporção 1136 x 1600 da imagem */
+  width: min(96vw, calc(96vh * 1136 / 1600));
+  aspect-ratio: 1136 / 1600;
+  background: var(--fundo) url("moldura.jpg") center / cover no-repeat;
+  box-shadow: 0 10px 40px rgba(60, 45, 20, 0.18);
+  overflow: hidden;
+  /* liga as unidades "cqw": 1cqw = 1% da largura do cartão */
+  container-type: inline-size;
+}
+
+/* Todos os textos ficam centralizados e posicionados por cima da moldura */
+.convite > p,
+.convite > h1 {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-weight: 400;
+  font-variant-numeric: lining-nums;  /* números alinhados, como na arte original */
+}
+
+/* =========================================================
+   FASE 3 — Posição e tipografia de cada texto
+   ========================================================= */
+.data {
+  top: 27.1%;
+  font-family: "Playfair Display", serif;
+  font-size: 4cqw;
+  line-height: 1;
+}
+
+.hora {
+  top: 30.6%;
+  font-family: "Playfair Display", serif;
+  font-style: italic;
+  font-size: 3.3cqw;
+  line-height: 1;
+}
+
+.titulo {
+  top: 36.6%;
+  font-family: "Pinyon Script", cursive;
+  font-size: 15.3cqw;
+  line-height: 0.78;
+}
+
+.titulo .linha {
+  display: block;
+}
+
+.noivos {
+  top: 54.5%;
+  font-family: "Pinyon Script", cursive;
+  font-size: 8cqw;
+  line-height: 1.1;
+}
+
+.e-comercial {
+  font-family: "Great Vibes", cursive;
+  padding: 0 0.12em;
+}
+
+.local {
+  top: 68.3%;
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  font-size: 3.35cqw;
+  line-height: 1;
+}
+
+.endereco {
+  top: 72.1%;
+  font-family: "Playfair Display", serif;
+  font-size: 2.82cqw;
+  line-height: 1.05;
+}
+
+/* =========================================================
+   FASE 4 — Brilho dourado nas letras
+   ========================================================= */
+.dourado {
+  /* faixa de ouro com um reflexo claro no meio */
+  background-image: linear-gradient(
+    110deg,
+    var(--ouro) 0%,
+    var(--ouro) 38%,
+    var(--ouro-claro) 45%,
+    var(--ouro-brilho) 50%,
+    var(--ouro-claro) 55%,
+    var(--ouro) 62%,
+    var(--ouro-escuro) 80%,
+    var(--ouro) 100%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+
+  /* recorta o degradê no formato das letras */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* leve aura dourada em volta das letras */
+  filter: drop-shadow(0 0 0.15cqw rgba(201, 162, 39, 0.35));
+
+  animation: reflexo 5s ease-in-out infinite;
+  animation-delay: var(--atraso, 0s);  /* o JS define um atraso diferente por texto */
+}
+
+@keyframes reflexo {
+  0%   { background-position: 100% 0; }  /* reflexo fora, à direita */
+  60%  { background-position: 0% 0; }    /* reflexo atravessou o texto */
+  100% { background-position: 0% 0; }    /* pausa antes de repetir */
+}
+
+/* =========================================================
+   FASE 5 — Faíscas criadas pelo JavaScript
+   ========================================================= */
+.aliancas {
+  position: absolute;
+  left: 42.5%;
+  top: 19.5%;
+  width: 15%;
+  height: 3.6%;
+}
+
+.faisca {
+  position: absolute;
+  width: var(--tamanho);
+  height: var(--tamanho);
+  pointer-events: none;
+  background: radial-gradient(circle, #fff6cf 0%, #e6bd45 40%, #b8902a 70%, rgba(184, 144, 42, 0) 100%);
+  /* estrela de 4 pontas */
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  transform: translate(-50%, -50%) scale(0);
+  animation: piscar 1.4s ease-in-out forwards;
+}
+
+@keyframes piscar {
+  0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg);    opacity: 0; }
+  50%  { transform: translate(-50%, -50%) scale(1) rotate(45deg);   opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0) rotate(90deg);   opacity: 0; }
+}
+
+/* Quem pede menos movimento no sistema vê o dourado parado */
+@media (prefers-reduced-motion: reduce) {
+  .dourado { animation: none; background-position: 50% 0; }
+  .faisca  { display: none; }
+}
