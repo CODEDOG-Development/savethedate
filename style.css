@@ -7,6 +7,16 @@
   --ouro: #8f7323;           /* dourado medido nas letras originais */
   --ouro-claro: #c9a13a;
   --ouro-brilho: #f7dc7c;    /* reflexo: ouro bem claro (branco sumiria no creme) */
+
+  /* largura do cartão: o maior tamanho que cabe na tela sem distorcer (proporção 1136 x 1600) */
+  --w: min(100vw, calc(100vh * 1136 / 1600));
+}
+
+/* navegadores novos usam "dvh", a altura real no celular (descontando as barras do navegador) */
+@supports (height: 100dvh) {
+  :root {
+    --w: min(100vw, calc(100dvh * 1136 / 1600));
+  }
 }
 
 * {
@@ -16,26 +26,41 @@
 }
 
 body {
-  min-height: 100vh;
+  height: 100vh;               /* reserva para navegadores antigos */
+  height: 100dvh;              /* altura real no celular, descontando as barras do navegador */
   display: grid;
   place-items: center;
-  background: #e9e2d8;
+  background: var(--fundo);    /* mesmo creme da moldura: a tela inteira vira o convite */
+  overflow: hidden;            /* sem barra de rolagem */
 }
 
 /* =========================================================
-   FASE 2 — O cartão (moldura azul vem da imagem de fundo)
+   FASE 2 — O cartão (moldura oval) e os cantos da tela
    ========================================================= */
 .convite {
   position: relative;
-  /* cabe na tela inteira mantendo a proporção 1136 x 1600 da imagem */
-  width: min(96vw, calc(96vh * 1136 / 1600));
+  width: var(--w);
   aspect-ratio: 1136 / 1600;
   background: var(--fundo) url("moldura.jpg") center / cover no-repeat;
-  box-shadow: 0 10px 40px rgba(60, 45, 20, 0.18);
   overflow: hidden;
   /* liga as unidades "cqw": 1cqw = 1% da largura do cartão */
   container-type: inline-size;
 }
+
+/* Os 4 arabescos ficam presos nos cantos da tela.
+   As medidas são as da arte original (em pixels de 1136 de largura),
+   convertidas para o tamanho atual do cartão: valor * var(--w) / 1136 */
+.canto {
+  position: fixed;
+  z-index: 2;
+  height: auto;
+  pointer-events: none;
+}
+
+.canto-sup-esq { top: calc(var(--w) * 29 / 1136);    left: calc(var(--w) * 26 / 1136);  width: calc(var(--w) * 395 / 1136); }
+.canto-sup-dir { top: calc(var(--w) * 29 / 1136);    right: calc(var(--w) * 50 / 1136); width: calc(var(--w) * 394 / 1136); }
+.canto-inf-esq { bottom: calc(var(--w) * 29 / 1136); left: calc(var(--w) * 26 / 1136);  width: calc(var(--w) * 404 / 1136); }
+.canto-inf-dir { bottom: calc(var(--w) * 29 / 1136); right: calc(var(--w) * 27 / 1136); width: calc(var(--w) * 403 / 1136); }
 
 /* Todos os textos ficam centralizados e posicionados por cima da moldura */
 .convite > p,
@@ -43,6 +68,9 @@ body {
   position: absolute;
   left: 0;
   right: 0;
+  width: fit-content;          /* a caixa fica do tamanho do texto, e não do cartão todo */
+  margin: -0.3em auto 0;       /* "auto" centraliza; o -0.3em compensa o padding de cima */
+  padding: 0.3em 0.3em;        /* espaço extra para as pontas das letras cursivas não serem cortadas */
   text-align: center;
   font-weight: 400;
   font-variant-numeric: lining-nums;  /* números alinhados, como na arte original */
@@ -168,6 +196,30 @@ body {
   0%   { transform: translate(-50%, -50%) scale(0) rotate(0deg);    opacity: 0; }
   50%  { transform: translate(-50%, -50%) scale(1) rotate(45deg);   opacity: 1; }
   100% { transform: translate(-50%, -50%) scale(0) rotate(90deg);   opacity: 0; }
+}
+
+/* =========================================================
+   FASE 6 — Dica de tela cheia (criada pelo JavaScript)
+   ========================================================= */
+.dica-tela-cheia {
+  position: fixed;
+  left: 50%;
+  bottom: 1.2rem;
+  transform: translateX(-50%);
+  z-index: 3;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: rgba(143, 115, 35, 0.9);   /* o mesmo dourado das letras */
+  color: #fffaf0;
+  font-family: "Playfair Display", serif;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.dica-tela-cheia.sumir {
+  opacity: 0;
 }
 
 /* Quem pede menos movimento no sistema vê o dourado parado */
