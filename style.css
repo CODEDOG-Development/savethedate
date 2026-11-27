@@ -198,30 +198,6 @@ body {
   100% { transform: translate(-50%, -50%) scale(0) rotate(90deg);   opacity: 0; }
 }
 
-/* =========================================================
-   FASE 6 — Dica de tela cheia (criada pelo JavaScript)
-   ========================================================= */
-.dica-tela-cheia {
-  position: fixed;
-  left: 50%;
-  bottom: 1.2rem;
-  transform: translateX(-50%);
-  z-index: 3;
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  background: rgba(143, 115, 35, 0.9);   /* o mesmo dourado das letras */
-  color: #fffaf0;
-  font-family: "Playfair Display", serif;
-  font-size: 0.85rem;
-  white-space: nowrap;
-  pointer-events: none;
-  transition: opacity 0.8s ease;
-}
-
-.dica-tela-cheia.sumir {
-  opacity: 0;
-}
-
 /* Quem pede menos movimento no sistema vê o dourado parado */
 @media (prefers-reduced-motion: reduce) {
   .dourado { animation: none; background-position: 50% 0; }
